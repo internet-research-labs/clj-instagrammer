@@ -20,7 +20,7 @@
    :client-secret (env :ig-client-secret)
    :redirect-uri  (env :ig-redirect-uri)
    :website-url   (env :ig-website-url)
-   :callback-url  "http://fierce-retreat-1705.herokuapp.com/callback-url"})
+   :callback-url  "https://fierce-retreat-1705.herokuapp.com/callback-url"})
 
 
 (defn handle-websocket
