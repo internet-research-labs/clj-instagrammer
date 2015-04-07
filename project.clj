@@ -18,8 +18,6 @@
   :test-paths     ["src/test/clj"]
   :resource-paths ["src/main/resources"]
   :java-source-paths ["src/main/java"]
-  :plugins [[lein-ring "0.9.3"]
-            [environ/environ.lein "0.2.1"]]
-  :hooks [environ.leiningen.hooks]
+  :plugins [[lein-ring "0.9.3"]]
   :ring {:handler agency.irl.instagrammer.core/app}
   :profiles {:production {:env {:production true}}})
