@@ -3,11 +3,15 @@
   :url "http://irl.agency/"
   :license {:name "UNLICENSE" :url "http://unlicense.org/"}
   :dependencies [[org.clojure/clojure "1.6.0"]
+                 [clansi "1.0.0"]
                  [javax.servlet/servlet-api "2.5"]
                  [compojure "1.3.3"]
                  [http-kit "2.1.16"]
+                 [clj-http "1.1.0"]
                  [de.ubercode.clostache/clostache "1.4.0"]
-                 [org.clojure/tools.cli "0.3.1"]]
+                 [org.clojure/tools.cli "0.3.1"]
+                 [environ "1.0.0"]]
+  :uberjar-name "instagrammer-standalone.jar"
   :main agency.irl.instagrammer.core
   :source-paths   ["src/main/clj"]
   :test-paths     ["src/test/clj"]

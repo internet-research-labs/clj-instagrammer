@@ -1,5 +1,7 @@
 (ns agency.irl.instagrammer.core
-  (:require [agency.irl.instagrammer.respond :as respond]
+  (:require [environ.core :refer [env]]
+            [agency.irl.instagrammer.response :as insta-response]
+            [agency.irl.instagrammer.subscribe :as subscribe]
             [clostache.parser :refer [render-resource]]
             [compojure.core :refer :all]
             [compojure.route :as route]
@@ -8,15 +10,17 @@
             [org.httpkit.server :refer :all]
             [org.httpkit.timer :refer :all]
             [ring.util.response :refer :all]
+            [clansi :refer [style]]
             [clojure.tools.cli :refer [parse-opts]])
   (:gen-class))
 
 
 (def ^:private client-options
-  {:client-id     ""
-   :client-secret ""
-   :callback-url  ""
-   :redirect-uri  ""})
+  {:client-id     (env :ig-client-id)
+   :client-secret (env :ig-client-secret)
+   :redirect-uri  (env :ig-redirect-uri)
+   :website-url   (env :ig-website-url)
+   :callback-url  "https://fierce-retreat-1705.herokuapp.com/callback-url"})
 
 
 (defn handle-websocket
@@ -30,16 +34,11 @@
                       :body    "Long polling?"}))))
 
 
-(defn instagram-handler
-  "Routes Instagram-like traffic"
-  [req]
-
-
 (defroutes main-routes
     (GET  "/"    req (render-resource "templates/index.html"))
     (GET  "/ws"  []  handle-websocket)
-    (GET  "/callback-url" [] handle-subscription)
-    (POST "/callback-url" [] handle-new-media)
+    (GET  "/callback-url" [] insta-response/echo-hub-challenge)
+    (POST "/callback-url" [] insta-response/handle-new-media)
     (route/not-found "Page not found"))
 
 
@@ -51,14 +50,34 @@
 (defn -main
   [& args]
 
-      
-  (run-server (-> app (instagram/attach geo-sub tag-sub) (handler/site)) {:port 3000})
+  (println)
+  (println "***")
+  (println)
+  (println (style "client-id ....... " :yellow) (style (:client-id client-options)     :red))
+  (println (style "client-secret ... " :yellow) (style (:client-secret client-options) :red))
+  (println (style "redirect-uri .... " :yellow) (style (:redirect-uri client-options)  :red))
+  (println (style "website-url ..... " :yellow) (style (:website-url client-options)   :red))
+  (println)
+  (println "***")
+  (println)
 
-  (with-instagram client-options
-    (let [geo-sub (subscribe/geo :lng 0 :lat 0 :radius 100)
-          tag-sub (subscribe/tag :tag "yolo")
-          apppppp (-> app (instagram/attach geo-sub tag-sub))]
+  (run-server app {:port 5000})
 
+  ;; Bing all that jazz
+  (binding [subscribe/*client-id*     (:client-id client-options)
+            subscribe/*client-secret* (:client-secret client-options)
+            subscribe/*callback-url*  (:callback-url client-options)]
+
+    (let [sub-geo (subscribe/geo :lat 40.7903 :lng 73.9597 :radius 25)]
+      (println "<<<<<")
+      (println @sub-geo)
+      (println ">>>>>")
       ))
+
+; (with-instagram client-options
+;   (let [geo-sub (subscribe/geo :lng 0 :lat 0 :radius 100)
+;         tag-sub (subscribe/tag :tag "yolo")
+;         apppppp (-> app (instagram/attach geo-sub tag-sub))]
+;     ))
 
   (println "running"))
