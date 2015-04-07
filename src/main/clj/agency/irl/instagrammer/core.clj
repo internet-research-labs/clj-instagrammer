@@ -71,7 +71,7 @@
             subscribe/*client-secret* (:client-secret client-options)
             subscribe/*callback-url*  (:callback-url client-options)]
 
-    (let [sub-geo (subscribe/geo :lat 40.7903 :lng 73.9597 :radius 25)]
+    (let [sub-geo (subscribe/tag :tag "yolo")]
       (println "<<<<<")
       (println @sub-geo)
       (println ">>>>>")
