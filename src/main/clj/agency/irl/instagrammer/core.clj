@@ -35,7 +35,7 @@
 
 
 (defroutes main-routes
-    (GET  "/"    req (render-resource "templates/index.html"))
+    (GET  "/"    req (render-resource "templates/index.html" {:websocket-url (env :websocket-url)}))
     (GET  "/ws"  []  handle-websocket)
     (GET  "/callback-url" [] insta-response/echo-hub-challenge)
     (POST "/callback-url" [] insta-response/handle-new-media)

@@ -1,4 +1,4 @@
-<html>
+ <html>
   <head>
     <title>Clouds come floating into my life, no longer to carry rain or usher storm, but to add color to my sunset sky.</title>
   </head>
@@ -13,7 +13,7 @@
            console.log("WebSocket is supported by your Browser!");
            // Let us open a web socket
 
-           var ws = new WebSocket("ws://localhost:3000/ws");
+           var ws = new WebSocket("{{websocket-url}}");
 
            ws.onopen = function() {
               ws.send("Message to send");
