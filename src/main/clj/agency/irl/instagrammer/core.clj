@@ -63,7 +63,8 @@
   (println "***")
   (println)
 
-  (run-server app {:port (env :port)})
+
+  (run-server app {:port (Integer. (or port (env :port) 5000))})
 
   ;; Bing all that jazz
 ; (binding [subscribe/*client-id*     (:client-id client-options)
