@@ -11,11 +11,15 @@
                  [de.ubercode.clostache/clostache "1.4.0"]
                  [org.clojure/tools.cli "0.3.1"]
                  [environ "1.0.0"]]
+  :min-lein-version "2.0.0"
   :uberjar-name "instagrammer-standalone.jar"
   :main agency.irl.instagrammer.core
   :source-paths   ["src/main/clj"]
   :test-paths     ["src/test/clj"]
   :resource-paths ["src/main/resources"]
   :java-source-paths ["src/main/java"]
-  :plugins [[lein-ring "0.9.3"]]
-  :ring {:handler agency.irl.instagrammer.core/app})
+  :plugins [[lein-ring "0.9.3"]
+            [environ/environ.lein "0.2.1"]]
+  :hooks [environ.leiningen.hooks]
+  :ring {:handler agency.irl.instagrammer.core/app}
+  :profiles {:production {:env {:production true}}})
