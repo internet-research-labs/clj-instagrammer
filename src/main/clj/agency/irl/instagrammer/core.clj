@@ -20,7 +20,7 @@
    :client-secret (env :ig-client-secret)
    :redirect-uri  (env :ig-redirect-uri)
    :website-url   (env :ig-website-url)
-   :callback-url  "https://fierce-retreat-1705.herokuapp.com/callback-url"})
+   :callback-url  "http://fierce-retreat-1705.herokuapp.com/callback-url"})
 
 
 (defn handle-websocket
@@ -53,6 +53,8 @@
   (println)
   (println "***")
   (println)
+  (println "PORT: " (env :port))
+  (println)
   (println (style "client-id ....... " :yellow) (style (:client-id client-options)     :red))
   (println (style "client-secret ... " :yellow) (style (:client-secret client-options) :red))
   (println (style "redirect-uri .... " :yellow) (style (:redirect-uri client-options)  :red))
@@ -61,18 +63,18 @@
   (println "***")
   (println)
 
-  (run-server app {:port 5000})
+  (run-server app {:port (env :port)})
 
   ;; Bing all that jazz
-  (binding [subscribe/*client-id*     (:client-id client-options)
-            subscribe/*client-secret* (:client-secret client-options)
-            subscribe/*callback-url*  (:callback-url client-options)]
+; (binding [subscribe/*client-id*     (:client-id client-options)
+;           subscribe/*client-secret* (:client-secret client-options)
+;           subscribe/*callback-url*  (:callback-url client-options)]
 
-    (let [sub-geo (subscribe/geo :lat 40.7903 :lng 73.9597 :radius 25)]
-      (println "<<<<<")
-      (println @sub-geo)
-      (println ">>>>>")
-      ))
+;   (let [sub-geo (subscribe/geo :lat 40.7903 :lng 73.9597 :radius 25)]
+;     (println "<<<<<")
+;     (println @sub-geo)
+;     (println ">>>>>")
+;     ))
 
 ; (with-instagram client-options
 ;   (let [geo-sub (subscribe/geo :lng 0 :lat 0 :radius 100)
