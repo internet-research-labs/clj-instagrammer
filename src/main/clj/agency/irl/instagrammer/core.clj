@@ -2,6 +2,7 @@
   (:require [environ.core :refer [env]]
             [agency.irl.instagrammer.response :as insta-response]
             [agency.irl.instagrammer.subscribe :as subscribe]
+            [agency.irl.instagrammer.client :refer :all]
             [clostache.parser :refer [render-resource]]
             [compojure.core :refer :all]
             [compojure.route :as route]
@@ -67,15 +68,17 @@
   (run-server app {:port (Integer. (or port (env :port) 5000))})
 
   ;; Bing all that jazz
-  (binding [subscribe/*client-id*     (:client-id client-options)
-            subscribe/*client-secret* (:client-secret client-options)
-            subscribe/*callback-url*  (:callback-url client-options)]
+  (binding [*client-id*     (:client-id client-options)
+            *client-secret* (:client-secret client-options)
+            *callback-url*  (:callback-url client-options)]
 
-    (let [sub-geo (subscribe/tag :lat 40.7903 :lng 73.9597 :radius 5000)
+    (println *client-id*)
+    (println *client-secret*)
+    (println *callback-url*)
+
+    (let [sub-geo (subscribe/geo :lat 40.7903 :lng 73.9597 :radius 5000)
           sub-tag (subscribe/tag :tag "yolo")]
-      (println "<<<<<")
       (println @sub-geo @sub-tag)
-      (println ">>>>>")
       ))
 
 ; (with-instagram client-options
