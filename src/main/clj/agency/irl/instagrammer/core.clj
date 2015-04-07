@@ -12,21 +12,34 @@
   (:gen-class))
 
 
+(def ^:private client-options
+  {:client-id     ""
+   :client-secret ""
+   :callback-url  ""
+   :redirect-uri  ""})
+
+
 (defn handle-websocket
+  "Handle requests for WebSockets"
   [request]
   (with-channel request channel
-    (println (websocket? channel))
     (if (websocket? channel)
-      (on-receive channel (fn [data]
-                            (send! channel data)))
+      (on-receive channel (fn [data] (send! channel data)))
       (send! channel {:status 200
                       :headers {"Content-Type" "text/plain"}
                       :body    "Long polling?"}))))
 
 
+(defn instagram-handler
+  "Routes Instagram-like traffic"
+  [req]
+
+
 (defroutes main-routes
-    (GET "/" req (render-resource "templates/index.html"))
-    (GET "/ws" req (handle-websocket req))
+    (GET  "/"    req (render-resource "templates/index.html"))
+    (GET  "/ws"  []  handle-websocket)
+    (GET  "/callback-url" [] handle-subscription)
+    (POST "/callback-url" [] handle-new-media)
     (route/not-found "Page not found"))
 
 
@@ -36,7 +49,16 @@
 
 
 (defn -main
-  "I don't do a whole lot."
   [& args]
-  (run-server app {:port 3000})
-  (println "running 💆a "))
+
+      
+  (run-server (-> app (instagram/attach geo-sub tag-sub) (handler/site)) {:port 3000})
+
+  (with-instagram client-options
+    (let [geo-sub (subscribe/geo :lng 0 :lat 0 :radius 100)
+          tag-sub (subscribe/tag :tag "yolo")
+          apppppp (-> app (instagram/attach geo-sub tag-sub))]
+
+      ))
+
+  (println "running"))
