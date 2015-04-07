@@ -48,7 +48,7 @@
 
 
 (defn -main
-  [& args [port]]
+  [& [port]]
 
   (println)
   (println "***")
