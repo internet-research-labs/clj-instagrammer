@@ -67,15 +67,15 @@
   (run-server app {:port (Integer. (or port (env :port) 5000))})
 
   ;; Bing all that jazz
-; (binding [subscribe/*client-id*     (:client-id client-options)
-;           subscribe/*client-secret* (:client-secret client-options)
-;           subscribe/*callback-url*  (:callback-url client-options)]
+  (binding [subscribe/*client-id*     (:client-id client-options)
+            subscribe/*client-secret* (:client-secret client-options)
+            subscribe/*callback-url*  (:callback-url client-options)]
 
-;   (let [sub-geo (subscribe/geo :lat 40.7903 :lng 73.9597 :radius 25)]
-;     (println "<<<<<")
-;     (println @sub-geo)
-;     (println ">>>>>")
-;     ))
+    (let [sub-geo (subscribe/geo :lat 40.7903 :lng 73.9597 :radius 25)]
+      (println "<<<<<")
+      (println @sub-geo)
+      (println ">>>>>")
+      ))
 
 ; (with-instagram client-options
 ;   (let [geo-sub (subscribe/geo :lng 0 :lat 0 :radius 100)
