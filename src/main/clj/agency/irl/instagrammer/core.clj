@@ -2,6 +2,7 @@
   (:require [environ.core :refer [env]]
             [agency.irl.instagrammer.response :refer [*subscription*] :as insta-response]
             [agency.irl.instagrammer.subscribe :as subscribe]
+            [agency.irl.instagrammer.unsubscribe :as unsubscribe]
             [agency.irl.instagrammer.client :refer :all]
             [clostache.parser :refer [render-resource]]
             [compojure.core :refer :all]
@@ -111,16 +112,14 @@
   (let [server-port (Integer. (or port (env :port) 5000))]
     (run-server app {:port server-port}))
 
-; (binding [*client-id*     (:client-id client-options)
-;           *client-secret* (:client-secret client-options)
-;           *callback-url*  (:callback-url client-options)
-;           *subscription*  "SICKK!!!"]
-;   (insta-response/handle-new-media "sick"))
-; (binding [*client-id*     (:client-id client-options)
-;           *client-secret* (:client-secret client-options)
-;           *callback-url*  (:callback-url client-options)
-;           *subscription*  "!!!!!!!!"]
-;   (insta-response/handle-new-media "whatever"))
+  (binding [*client-id*     (:client-id client-options)
+            *client-secret* (:client-secret client-options)
+            *callback-url*  (:callback-url client-options)]
+
+    (unsubscribe/all-sync)
+
+    (let [geo-sub (subscribe/geo :lng 0 :lat 0 :radius 100)
+          tag-sub (subscribe/tag :tag "yolo")]))
 
 
 ; ; Bind client info

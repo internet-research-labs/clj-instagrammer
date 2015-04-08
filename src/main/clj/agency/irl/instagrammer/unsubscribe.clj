@@ -6,15 +6,11 @@
   "Sends a UNSUBSCRIBE ALL HTTP request."
   []
   (client/delete
-    "https://api.instagram.com/v1/subscriptions/"
-    {:form-params {:client_id     *client-id*
-                   :client_secret *client-secret*
-                   :object        "geography"
-                   :aspect        "media"
-                   :lat           lat
-                   :lng           lng
-                   :radius        radius
-                   :callback_url  *callback-url*}}))
+    (str 
+      "https://api.instagram.com/v1/subscriptions"
+      "?client_secret=" *client-secret*
+      "&object=all"
+      "&client_id=" *client-id*)))
 
 (defn all
   "Sends a UNSUBSCRIBE ALL HTTP request asynchronously."

@@ -40,7 +40,7 @@
   [callback]
   (fn [req]
     (future (callback
-              (cheshire/parse-string (body-string req))
+              (cheshire/parse-string (body-string req) true)
               (:params (params-request req))))
     {:status 200
      :body   "🍕 "
