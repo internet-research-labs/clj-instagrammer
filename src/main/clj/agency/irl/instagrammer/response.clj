@@ -1,7 +1,7 @@
 (ns agency.irl.instagrammer.response
   (:require [ring.util.codec :as codec]
             [ring.util.request :refer [body-string]]
-            [ring.middleware.params :refer [wrap-json-body params-request]]))
+            [ring.middleware.params :refer [params-request]]))
 
 (def ^:dynamic *subscription* nil)
 
