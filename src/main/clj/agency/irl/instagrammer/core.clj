@@ -24,6 +24,10 @@
    :callback-url  "https://fierce-retreat-1705.herokuapp.com/callback-url"})
 
 
+(def ^:dynamic *geo-sub* (atom {}))
+(def ^:dynamic *tag-sub* (atom {}))
+
+
 (defn handle-websocket
   "Handle requests for WebSockets"
   [request]
@@ -64,20 +68,26 @@
   (println "***")
   (println)
 
-  (let [server-port (Integer. (or port (env :port) 5000))]
-    (run-server app {:port server-port}))
+  (binding [*a* (atom "Everything is fine.")]
+    (future (infinite-loop-1)))
 
-  ;; Bing all that jazz
-  (binding [*client-id*     (:client-id client-options)
-            *client-secret* (:client-secret client-options)
-            *callback-url*  (:callback-url client-options)]
+  (binding [*a* (atom {})]
+    (future (infinite-loop-2)))
 
-    (let [
-          ;sub-geo (subscribe/geo :lat 40.7903 :lng 73.9597 :radius 5000)
-          ;sub-tag (subscribe/tag :tag "yolo")
-          ]
-      ;(println @sub-geo @sub-tag)
-      ))
+; (let [server-port (Integer. (or port (env :port) 5000))]
+;   (run-server app {:port server-port}))
+
+; ; Bind client info
+; (binding [*client-id*     (:client-id client-options)
+;           *client-secret* (:client-secret client-options)
+;           *callback-url*  (:callback-url client-options)]
+
+;   (let [
+;         ;sub-geo (subscribe/geo :lat 40.7903 :lng 73.9597 :radius 5000)
+;         ;sub-tag (subscribe/tag :tag "yolo")
+;         ]
+;     ;(println @sub-geo @sub-tag)
+;     ))
 
 ; (with-instagram client-options
 ;   (let [geo-sub (subscribe/geo :lng 0 :lat 0 :radius 100)

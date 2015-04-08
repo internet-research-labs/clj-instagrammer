@@ -5,4 +5,5 @@
 (def ^:dynamic *redirect-uri*  nil)
 (def ^:dynamic *website-url*   nil)
 (def ^:dynamic *callback-url*  nil)
+(def ^:dynamic *subscriptions* nil)
 (def ^:dynamic *debug-mode*    nil)
