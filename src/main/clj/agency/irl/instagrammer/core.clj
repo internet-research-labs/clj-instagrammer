@@ -118,7 +118,8 @@
 
     (unsubscribe/all-sync)
 
-    (let [geo-sub (subscribe/geo :lng 0 :lat 0 :radius 100)
+    (let [geo-sub-1 (subscribe/geo :lng 74.0059 :lat 40.7127 :radius 5000)
+          geo-sub-2 (subscribe/geo :lat 40.7127 :lng 74.0059 :radius 5000)
           tag-sub (subscribe/tag :tag "yolo")]))
 
 
