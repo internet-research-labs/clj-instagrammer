@@ -74,7 +74,7 @@
   "Does something with new media from instagram"
   [body params]
   (println body)
-  (println params)
+  ; (println params)
   (update-clients! "got update"))
 
 

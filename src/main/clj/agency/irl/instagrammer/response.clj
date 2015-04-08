@@ -1,6 +1,7 @@
 (ns agency.irl.instagrammer.response
   (:require [ring.util.codec :as codec]
             [ring.util.request :refer [body-string]]
+            [cheshire.core :as cheshire]
             [ring.middleware.params :refer [params-request]]))
 
 (def ^:dynamic *subscription* nil)
@@ -39,7 +40,7 @@
   [callback]
   (fn [req]
     (future (callback
-              (body-string req)
+              (cheshire/parse-string (body-string req))
               (:params (params-request req))))
     {:status 200
      :body   "🍕 "

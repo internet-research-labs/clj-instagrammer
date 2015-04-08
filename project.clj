@@ -5,12 +5,14 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [clansi "1.0.0"]
                  [javax.servlet/servlet-api "2.5"]
+                 [de.ubercode.clostache/clostache "1.4.0"]
+                 [org.clojure/tools.cli "0.3.1"]
+
                  [compojure "1.3.3"]
                  [http-kit "2.1.16"]
                  [clj-http "1.1.0"]
-                 [de.ubercode.clostache/clostache "1.4.0"]
+                 [instagram-api "0.1.8"]
                  [cheshire "5.4.0"]
-                 [org.clojure/tools.cli "0.3.1"]
                  [environ "1.0.0"]]
   :min-lein-version "2.0.0"
   :uberjar-name "instagrammer-standalone.jar"
