@@ -43,6 +43,11 @@
   (println "--" (get @clients client))
   (swap! clients dissoc client))
 
+(defn update-clients! [message]
+  (doseq [client (keys @clients)]
+    (send! client message)))
+
+
 ;; >>> socket manager
 
 
@@ -67,9 +72,10 @@
 
 (defn got-new-media
   "Does something with new media from instagram"
-  [req]
-  (doseq [client (keys @clients)]
-    (send! client "Update...")))
+  [body params]
+  (println body)
+  (println params)
+  (update-clients! "got update"))
 
 
 (defroutes main-routes

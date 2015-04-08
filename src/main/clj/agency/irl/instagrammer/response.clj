@@ -1,6 +1,7 @@
 (ns agency.irl.instagrammer.response
   (:require [ring.util.codec :as codec]
-            [ring.middleware.params :refer [params-request]]))
+            [ring.util.request :refer [body-string]]
+            [ring.middleware.params :refer [wrap-json-body params-request]]))
 
 (def ^:dynamic *subscription* nil)
 
@@ -37,7 +38,9 @@
   "Returns a handler that fires a response to the callback."
   [callback]
   (fn [req]
-    (future (callback (:params (params-request req))))
+    (future (callback
+              (body-string req)
+              (:params (params-request req))))
     {:status 200
      :body   "🍕 "
      :header  {"Content-Type" "text/plain; charset=utf-8"}}))
