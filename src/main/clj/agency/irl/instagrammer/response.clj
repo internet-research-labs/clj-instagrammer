@@ -1,7 +1,8 @@
 (ns agency.irl.instagrammer.response
   (:require [ring.util.codec :as codec]
-            [ring.middleware.params]))
+            [ring.middleware.params :refer [params-request]]))
 
+(def ^:dynamic *subscription* nil)
 
 (defn- parse-params [params encoding]
   (let [params (codec/form-decode params encoding)]
@@ -26,6 +27,18 @@
 (defn handle-new-media
   "Returns an immediate response, and fires off events."
   [req]
-  (println (:body req))
+  (println *subscription*)
   {:status 200
-   :body   "🍕 "})
+   :body   "🍕 "
+   :header  {"Content-Type" "text/plain; charset=utf-8"}})
+
+
+(defn make-new-handler
+  "Returns a handler that fires a response to the callback."
+  [callback]
+  (fn [req]
+    (future (callback (:params (params-request req))))
+    {:status 200
+     :body   "🍕 "
+     :header  {"Content-Type" "text/plain; charset=utf-8"}}))
+

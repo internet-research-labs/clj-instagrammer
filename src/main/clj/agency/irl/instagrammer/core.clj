@@ -1,6 +1,6 @@
 (ns agency.irl.instagrammer.core
   (:require [environ.core :refer [env]]
-            [agency.irl.instagrammer.response :as insta-response]
+            [agency.irl.instagrammer.response :refer [*subscription*] :as insta-response]
             [agency.irl.instagrammer.subscribe :as subscribe]
             [agency.irl.instagrammer.client :refer :all]
             [clostache.parser :refer [render-resource]]
@@ -24,26 +24,59 @@
    :callback-url  "https://fierce-retreat-1705.herokuapp.com/callback-url"})
 
 
-(def ^:dynamic *geo-sub* (atom {}))
-(def ^:dynamic *tag-sub* (atom {}))
+;; <<< socket manager
+;;
+;; Collection of sockets mapped to a value and a set of functions that add and
+;; remove values from the collection. This is hack to make things work smoothly
+;; in clojure land. Is there a better way to share variables across several
+;; scopes? Without rewriting the overall flow too much?
+;; Notably, an event emitter needs to be handed a list of the current sockets
+;; everytime it is executed.
 
+(def clients (atom {}))
+
+(defn add-client! [client value]
+  (println "++" value)
+  (swap! clients assoc client value))
+
+(defn rm-client! [client]
+  (println "--" (get @clients client))
+  (swap! clients dissoc client))
+
+;; >>> socket manager
+
+
+;; <<< websocket handler
+;;
+;; A handler that attaches
 
 (defn handle-websocket
   "Handle requests for WebSockets"
   [request]
   (with-channel request channel
-    (if (websocket? channel)
-      (on-receive channel (fn [data] (send! channel data)))
-      (send! channel {:status 200
-                      :headers {"Content-Type" "text/plain"}
-                      :body    "Long polling?"}))))
+    (let [id (rand-int 1000000)]
+      (if (websocket? channel)
+        (do
+          (add-client! channel id)
+          (on-close channel (fn [status] (rm-client! channel))))
+        (send! channel {:status 200
+                        :headers {"Content-Type" "text/plain"}
+                        :body    "Long polling?"})))))
+
+;; >>> websocket handler
+
+(defn got-new-media
+  "Does something with new media from instagram"
+  [req]
+  (doseq [client (keys @clients)]
+    (send! client "Update...")))
 
 
 (defroutes main-routes
     (GET  "/"    req (render-resource "templates/index.html" {:websocket-url (env :websocket-url)}))
     (GET  "/ws"  []  handle-websocket)
     (GET  "/callback-url" [] insta-response/echo-hub-challenge)
-    (POST "/callback-url" [] insta-response/handle-new-media)
+    (POST "/callback-url" [] (insta-response/make-new-handler got-new-media))
     (route/not-found "Page not found"))
 
 
@@ -68,14 +101,21 @@
   (println "***")
   (println)
 
-  (binding [*a* (atom "Everything is fine.")]
-    (future (infinite-loop-1)))
 
-  (binding [*a* (atom {})]
-    (future (infinite-loop-2)))
+  (let [server-port (Integer. (or port (env :port) 5000))]
+    (run-server app {:port server-port}))
 
-; (let [server-port (Integer. (or port (env :port) 5000))]
-;   (run-server app {:port server-port}))
+; (binding [*client-id*     (:client-id client-options)
+;           *client-secret* (:client-secret client-options)
+;           *callback-url*  (:callback-url client-options)
+;           *subscription*  "SICKK!!!"]
+;   (insta-response/handle-new-media "sick"))
+; (binding [*client-id*     (:client-id client-options)
+;           *client-secret* (:client-secret client-options)
+;           *callback-url*  (:callback-url client-options)
+;           *subscription*  "!!!!!!!!"]
+;   (insta-response/handle-new-media "whatever"))
+
 
 ; ; Bind client info
 ; (binding [*client-id*     (:client-id client-options)
