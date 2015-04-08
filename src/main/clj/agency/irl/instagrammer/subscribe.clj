@@ -35,6 +35,7 @@
 (defn geo
   "Returns a future with the result of a request to subscribe to GEO updates."
   [& {:keys [lat lng radius]}]
+  (println "(" lat " " lng " " radius ")")
   (future (sync-geo :lng lng :lat lat :radius radius)))
 
 

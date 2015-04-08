@@ -4,6 +4,7 @@
             [agency.irl.instagrammer.subscribe :as subscribe]
             [agency.irl.instagrammer.unsubscribe :as unsubscribe]
             [agency.irl.instagrammer.client :refer :all]
+            [agency.irl.instagrammer.request :as requester]
             [clostache.parser :refer [render-resource]]
             [compojure.core :refer :all]
             [compojure.route :as route]
@@ -13,6 +14,7 @@
             [org.httpkit.timer :refer :all]
             [ring.util.response :refer :all]
             [clansi :refer [style]]
+            [cheshire.core :as cheshire]
             [clojure.tools.cli :refer [parse-opts]])
   (:gen-class))
 
@@ -93,6 +95,33 @@
       (handler/site)))
 
 
+(def ^:private nyc-regions
+  [[40.765206 -73.977544 3500]
+   [40.765206 -73.977544 3500]])
+
+(defn parse-int [s]
+  (Integer/parseInt (re-find #"\A-?\d+" s)))
+
+(defn get-locations
+  [result]
+  (let [body      (:body result)
+        body-json (cheshire/parse-string body true)
+        data      (:data body-json)
+        timestamps (map #(parse-int (:created_time %1)) data)]
+    (println)
+    (println)
+    (println)
+    (println
+      "max = " (apply max timestamps))
+    (println
+      "min = " (apply min timestamps))
+    (println
+      "count = " (count timestamps))
+    ))
+
+
+
+
 (defn -main
   [& [port]]
 
@@ -119,29 +148,14 @@
 
     (unsubscribe/all-sync)
 
-    (let [;geo-sub-1 (subscribe/geo :lng 74.0059 :lat -40.7127 :radius 5000)
-          nyc-geo-sub (subscribe/geo :lat 40.748817 :lng -73.985428 :radius 5000)
-          ; tag-sub-1 (subscribe/tag :tag "picoftheday")
-          ; tag-sub-1 (subscribe/tag :tag "yolo")
-          ]))
+    (requester/poll-http :lat     40.765206
+                         :lng     -73.977544
+                         :radius   3500
+                         :callback get-locations)
 
+    ; (let [; geo-sub-1 (subscribe/geo :lng 74.0059 :lat -40.7127 :radius 5000)
+    ;       ; nyc-geo-sub (subscribe/geo :lat 40.765206 :lng -73.977544 :radius 4500)
+    ;       tag-sub-1 (subscribe/tag :tag "picoftheday")
+    ;       tag-sub-1 (subscribe/tag :tag "yolo")] ))
 
-; ; Bind client info
-; (binding [*client-id*     (:client-id client-options)
-;           *client-secret* (:client-secret client-options)
-;           *callback-url*  (:callback-url client-options)]
-
-;   (let [
-;         ;sub-geo (subscribe/geo :lat 40.7903 :lng 73.9597 :radius 5000)
-;         ;sub-tag (subscribe/tag :tag "yolo")
-;         ]
-;     ;(println @sub-geo @sub-tag)
-;     ))
-
-; (with-instagram client-options
-;   (let [geo-sub (subscribe/geo :lng 0 :lat 0 :radius 100)
-;         tag-sub (subscribe/tag :tag "yolo")
-;         apppppp (-> app (instagram/attach geo-sub tag-sub))]
-;     ))
-
-  (println "running"))
+  (println "running")))
