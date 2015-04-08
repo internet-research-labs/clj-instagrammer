@@ -74,6 +74,7 @@
 (defn got-new-media
   "Does something with new media from instagram"
   [body params]
+  (println "***")
   (println body)
   ; (println params)
   (update-clients! "got update"))
@@ -118,10 +119,11 @@
 
     (unsubscribe/all-sync)
 
-    (let [geo-sub-1 (subscribe/geo :lng 74.0059 :lat -40.7127 :radius 5000)
-          geo-sub-2 (subscribe/geo :lng -40.7127 :lat 74.0059 :radius 5000)
-          tag-sub-1 (subscribe/tag :tag "picoftheday")
-          tag-sub-1 (subscribe/tag :tag "yolo")]))
+    (let [;geo-sub-1 (subscribe/geo :lng 74.0059 :lat -40.7127 :radius 5000)
+          nyc-geo-sub (subscribe/geo :lat 40.748817 :lng -73.985428 :radius 5000)
+          ; tag-sub-1 (subscribe/tag :tag "picoftheday")
+          ; tag-sub-1 (subscribe/tag :tag "yolo")
+          ]))
 
 
 ; ; Bind client info
