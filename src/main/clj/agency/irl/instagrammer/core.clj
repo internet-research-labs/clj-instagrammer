@@ -5,6 +5,7 @@
             [agency.irl.instagrammer.unsubscribe :as unsubscribe]
             [agency.irl.instagrammer.client :refer :all]
             [agency.irl.instagrammer.request :as requester]
+            [agency.irl.instagrammer.times :as times]
             [clostache.parser :refer [render-resource]]
             [compojure.core :refer :all]
             [compojure.route :as route]
@@ -81,6 +82,10 @@
   ; (println params)
   (update-clients! "got update"))
 
+(defn show-error
+  [err]
+  (println "**ERR** >> " err))
+
 
 (defroutes main-routes
     (GET  "/"    req (render-resource "templates/index.html" {:websocket-url (env :websocket-url) :version "x_x"}))
@@ -102,24 +107,28 @@
 (defn parse-int [s]
   (Integer/parseInt (re-find #"\A-?\d+" s)))
 
+
 (defn get-locations
   [result]
   (let [body      (:body result)
         body-json (cheshire/parse-string body true)
         data      (:data body-json)
         timestamps (map #(parse-int (:created_time %1)) data)]
-    (println)
-    (println)
-    (println)
-    (println
-      "max = " (apply max timestamps))
-    (println
-      "min = " (apply min timestamps))
-    (println
-      "count = " (count timestamps))
-    ))
+
+    (let [min-stamp (apply max timestamps)
+               max-stamp (apply min timestamps) 
+               min-time  (times/format-time min-stamp)
+               max-time  (times/format-time max-stamp)]
+      (try 
+        (println "max = " min-stamp " (" min-time ")")
+        (println "min = " max-stamp  " (" max-time ")")
+        (println "count = " (count timestamps))
+        (catch Exception e (println "** ERR ** +> " (.getMessage e)))))))
 
 
+(defn fade-map
+  []
+  1)
 
 
 (defn -main
@@ -146,12 +155,16 @@
             *client-secret* (:client-secret client-options)
             *callback-url*  (:callback-url client-options)]
 
+    (println *client-id*)
+    (println *client-secret*)
+
     (unsubscribe/all-sync)
 
     (requester/poll-http :lat     40.765206
                          :lng     -73.977544
                          :radius   3500
-                         :callback get-locations)
+                         :callback get-locations
+                         :error    show-error)
 
     ; (let [; geo-sub-1 (subscribe/geo :lng 74.0059 :lat -40.7127 :radius 5000)
     ;       ; nyc-geo-sub (subscribe/geo :lat 40.765206 :lng -73.977544 :radius 4500)
