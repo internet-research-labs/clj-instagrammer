@@ -99,4 +99,8 @@ Grid.prototype.get = function(latlng) {
  *
  */
 Grid.prototype.ping = function(latlng, color) {
+  var entry = this.entry(latlng);
+  console.log(entry);
+  console.log(this.top, this.left);
+  console.log(this.bottom, this.right);
 }

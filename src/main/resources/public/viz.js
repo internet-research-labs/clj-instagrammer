@@ -1,10 +1,39 @@
 var viz = [
   {
+    "stylers": [
+      { "visibility": "simplified" }
+    ]
+  },{
+    "featureType": "administrative",
+    "stylers": [
+      { "visibility": "off" }
+    ]
+  },{
+    "featureType": "poi",
+    "stylers": [
+      { "hue": "#ff0000" },
+      { "visibility": "simplified" },
+      { "saturation": -100 },
+      { "lightness": -30 }
+    ]
+  },{
+    "featureType": "landscape.man_made",
+    "stylers": [
+      { "hue": "#00ff33" },
+      { "saturation": -100 },
+      { "lightness": -47 }
+    ]
+  },{
+    "featureType": "transit",
+    "stylers": [
+      { "visibility": "off" }
+    ]
+  },{
     "featureType": "water",
     "stylers": [
-      { "hue": "#0055ff" },
-      { "visibility": "simplified" },
-      { "lightness": 77 }
+      { "hue": "#00ffdd" },
+      { "saturation": -73 },
+      { "lightness": -15 }
     ]
   },{
     "featureType": "road",
@@ -12,38 +41,7 @@ var viz = [
       { "visibility": "off" }
     ]
   },{
-    "featureType": "landscape.natural",
-    "stylers": [
-      { "saturation": -41 },
-      { "lightness": -19 }
-    ]
-  },{
-    "featureType": "landscape.man_made",
-    "stylers": [
-      { "hue": "#ffdd00" },
-      { "saturation": -91 },
-      { "lightness": -62 }
-    ]
-  },{
-    "featureType": "poi",
-    "stylers": [
-      { "visibility": "simplified" },
-      { "saturation": -86 },
-      { "lightness": -62 },
-      { "hue": "#00ddff" }
-    ]
-  },{
-    "elementType": "labels.text",
-    "stylers": [
-      { "visibility": "off" }
-    ]
-  },{
     "elementType": "labels",
-    "stylers": [
-      { "visibility": "off" }
-    ]
-  },{
-    "featureType": "administrative",
     "stylers": [
       { "visibility": "off" }
     ]
@@ -74,7 +72,12 @@ function initialize() {
   };
   
   var map = new google.maps.Map(document.getElementById('map'), mapOptions);
-  ping({ lat: 40.7127, lng: -74.0059 }, map);
+  var grid = new Grid(map,
+                      {lat: 40.7127, lng: -74.0059},
+                      {lat: 40.7197, lng: -74.0049},
+                      100,
+                      100);
+  grid.ping({lat: 40.7127, lng: -74.0059}, "#FFFFFF");
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);
