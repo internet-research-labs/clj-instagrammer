@@ -51,7 +51,18 @@ var viz = [
   }
 ];
 
-function drawBox(map) {
+/**
+ * Ping a location with a geometry shape
+ * @param latlng {latlng-literal} latitutude/longitude literal {:lat ... :lng ...}
+ * @param map    {GMap} google map object
+ * @return undefined undefined
+ */
+function ping(latlng, map) {
+  var circle = new google.maps.Circle({center: latlng, radius: 100});
+  circle.setMap(map);
+}
+
+function pingCircle(latlng, map) {
 }
 
 function initialize() {
@@ -63,6 +74,7 @@ function initialize() {
   };
   
   var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+  ping({ lat: 40.7127, lng: -74.0059 }, map);
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);
