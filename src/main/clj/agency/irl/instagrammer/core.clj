@@ -89,6 +89,9 @@
     (GET  "/ws"  []  handle-websocket)
     (GET  "/callback-url" [] insta-response/echo-hub-challenge)
     (POST "/callback-url" [] (insta-response/make-new-handler got-new-media))
+    ;; works for root prefix
+    ;; (route/resources "/")
+    (route/resources "/")
     (route/not-found "Page not found"))
 
 
