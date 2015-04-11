@@ -27,11 +27,11 @@ function Grid(map, p, q, x_partitions, y_partitions) {
   }
 
   if (p.lng > q.lng) {
-    this.left  = p.lng;
-    this.right = q.lng;
-  } else {
-    this.left  = q.lng;
     this.right = p.lng;
+    this.left  = q.lng;
+  } else {
+    this.right = q.lng;
+    this.left  = p.lng;
   }
 
   this.x_partitions = x_partitions;
@@ -46,8 +46,8 @@ Grid.prototype.nudge = function(latlng) {
   var dx = this.right - this.left;
   var dy = this.top - this.bottom;
   return {
-    lat: (dx+0.5) * pos.i,
-    lng: (dy+0.5) * pos.j
+    lat: (dx) * pos.i + this.bottom,
+    lng: (dy) * pos.j + this.left
   };
 }
 
@@ -55,15 +55,15 @@ Grid.prototype.nudge = function(latlng) {
  *
  */
 Grid.prototype.entry = function(latlng) {
-  var x = latlng.lat - this.left;
-  var y = latlng.lng - this.bottom;
+  var x = latlng.lng - this.left;
+  var y = latlng.lat - this.bottom;
 
   var dx = this.right - this.left;
   var dy = this.top - this.bottom;
 
   return {
-    i: Math.floor(x/dx),
-    j: Math.floor(y/dy)
+    i: Math.floor((this.y_partitions-1)*(y)/dy),
+    j: Math.floor((this.x_partitions-1)*(x)/dx)
   };
 }
 
@@ -100,7 +100,15 @@ Grid.prototype.get = function(latlng) {
  */
 Grid.prototype.ping = function(latlng, color) {
   var entry = this.entry(latlng);
-  console.log(entry);
-  console.log(this.top, this.left);
-  console.log(this.bottom, this.right);
+  var nudge = this.nudge(latlng);
+  // this.grid[entry.i][entry.j] = new google.maps.Circle({center: nudge, radius: 1000});
+  // this.grid[entry.i][entry.j].setMap(this.map);
+
+  var circle = new google.maps.Circle({center: latlng, radius: 500});
+  circle.setMap(this.map);
+
+  console.log(nudge);
+
+  this.grid[entry.i][entry.j] = new google.maps.Circle({center: nudge, radius: 700});
+  this.grid[entry.i][entry.j].setMap(this.map);
 }

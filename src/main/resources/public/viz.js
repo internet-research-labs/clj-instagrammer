@@ -74,10 +74,13 @@ function initialize() {
   var map = new google.maps.Map(document.getElementById('map'), mapOptions);
   var grid = new Grid(map,
                       {lat: 40.7127, lng: -74.0059},
-                      {lat: 40.7197, lng: -74.0049},
+                      {lat: 40.7137, lng: -74.0049},
                       100,
                       100);
-  grid.ping({lat: 40.7127, lng: -74.0059}, "#FFFFFF");
+  // grid.ping({lat: 40.7127, lng: -74.0053}, "#FFFFFF");
+  grid.ping({lat: 40.7128, lng: -74.0059}, "#FFFFFF");
+  // console.log(grid.entry({lat: 40.7197, lng: -74.0053}));
+  // console.log(grid.nudge({lat: 40.7127, lng: -74.0053}));
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);
