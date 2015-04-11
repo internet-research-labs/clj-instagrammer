@@ -10,15 +10,24 @@
 (defn poll-http-sync
   [lat lng radius]
   (let [min-time (- (quot (System/currentTimeMillis) 1000) +40)]
-    (println "requesting min of... " min-time (times/format-time min-time))
     (client/get (format lat-lng-search-url
                         lat lng radius min-time *client-id* *client-secret*))))
 
 (defn poll-http
-  [& {:keys [lat lng radius callback error]}]
-  (future
-      (Thread/sleep 1000)
-      (try
-        (poll-http :lat lat :lng lng :radius radius :callback callback)
-        (callback (poll-http-sync lat lng radius))
-        (catch Exception e (error (.getMessage e))))))
+  "Send an HTTP request for new media at longitude/latitude, then recurses.
+  - lat:    decimal, latitude coordinate
+  - lng:    decimal, longitude coordinate
+  - radius: distance in meters
+  - every-ms: "
+  [& {:keys [lat lng radius every-ms callback error]}]
+  @(future
+     (Thread/sleep every-ms)
+     (callback (poll-http-sync lat lng radius))
+     (try
+       (poll-http :lat lat
+                  :lng lng
+                  :radius radius
+                  :every-ms every-ms
+                  :callback callback
+                  :error error)
+       (catch Exception e (error (.getMessage e))))))

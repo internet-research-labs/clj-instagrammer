@@ -7,14 +7,20 @@
                  [javax.servlet/servlet-api "2.5"]
                  [de.ubercode.clostache/clostache "1.4.0"]
                  [org.clojure/tools.cli "0.3.1"]
-
+                 [org.clojure/tools.logging "0.3.1"]
                  [compojure "1.3.3"]
                  [clj-time "0.9.0"]
                  [http-kit "2.1.16"]
                  [clj-http "1.1.0"]
                  [instagram-api "0.1.8"]
                  [cheshire "5.4.0"]
-                 [environ "1.0.0"]]
+                 [environ "1.0.0"]
+                 [org.slf4j/slf4j-log4j12 "1.7.1"]
+                 [log4j/log4j "1.2.17" :exclusions [javax.mail/mail
+                                                    javax.jms/jms
+                                                    com.sun.jmdk/jmxtools
+                                                    com.sun.jmx/jmxri]]]
+
   :min-lein-version "2.0.0"
   :uberjar-name "instagrammer-standalone.jar"
   :main agency.irl.instagrammer.core

@@ -1,6 +1,7 @@
 (ns agency.irl.instagrammer.response
   (:require [ring.util.codec :as codec]
             [ring.util.request :refer [body-string]]
+            [clojure.tools.logging :as log]
             [cheshire.core :as cheshire]
             [ring.middleware.params :refer [params-request]]))
 
@@ -29,7 +30,7 @@
 (defn handle-new-media
   "Returns an immediate response, and fires off events."
   [req]
-  (println *subscription*)
+  (log/debug "Handling new media")
   {:status 200
    :body   "🍕 "
    :header  {"Content-Type" "text/plain; charset=utf-8"}})

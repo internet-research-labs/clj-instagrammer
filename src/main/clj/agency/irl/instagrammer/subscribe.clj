@@ -1,5 +1,6 @@
 (ns agency.irl.instagrammer.subscribe
   (:require [clj-http.client :as client]
+            [clojure.tools.logging :as log]
             [agency.irl.instagrammer.client :refer :all]))
 
 
@@ -35,11 +36,12 @@
 (defn geo
   "Returns a future with the result of a request to subscribe to GEO updates."
   [& {:keys [lat lng radius]}]
-  (println "(" lat " " lng " " radius ")")
+  (log/debug "subscribing to geography: (" lat " " lng " " radius ")")
   (future (sync-geo :lng lng :lat lat :radius radius)))
 
 
 (defn tag
   "Returns a future with the result of a request to subscribe to GEO updates."
   [& {:keys [tag]}]
+  (log/debug "subscribing to tag (" tag ")")
   (future (sync-tag :tag tag)))

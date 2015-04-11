@@ -1,6 +1,5 @@
-(ns agency.irl.instagrammer.core
+(ns agency.irl.instagrammer.runner
   (:require [environ.core :refer [env]]
-            [clojure.tools.logging :as log]
             [agency.irl.instagrammer.response :refer [*subscription*] :as insta-response]
             [agency.irl.instagrammer.subscribe :as subscribe]
             [agency.irl.instagrammer.unsubscribe :as unsubscribe]
@@ -41,9 +40,11 @@
 (def clients (atom {}))
 
 (defn add-client! [client value]
+  (println "++" value)
   (swap! clients assoc client value))
 
 (defn rm-client! [client]
+  (println "--" (get @clients client))
   (swap! clients dissoc client))
 
 (defn update-clients! [message]
@@ -76,12 +77,14 @@
 (defn got-new-media
   "Does something with new media from instagram"
   [body params]
-  (log/debug "received update")
+  (println "***")
+  (println body)
+  ; (println params)
   (update-clients! "got update"))
 
 (defn show-error
   [err]
-  (log/error "error"))
+  (println "**ERR** >> " err))
 
 
 (defroutes main-routes
@@ -117,21 +120,32 @@
                min-time  (times/format-time min-stamp)
                max-time  (times/format-time max-stamp)]
       (try 
-        (log/debug "Errors comes in with:")
-        (log/debug "  max = " min-stamp " (" min-time ")")
-        (log/debug "  min = " max-stamp  " (" max-time ")")
-        (log/debug "  count = " (count timestamps))
-        (catch Exception e (log/error (.getMessage e)))))))
+        (println "max = " min-stamp " (" min-time ")")
+        (println "min = " max-stamp  " (" max-time ")")
+        (println "count = " (count timestamps))
+        (catch Exception e (println "** ERR ** +> " (.getMessage e)))))))
+
+
+(defn fade-map
+  []
+  1)
 
 
 (defn -main
   [& [port]]
 
-  (log/debug "Starting up new webserver with:")
-  (log/debug "  client-id ....... " (:client-id client-options))
-  (log/debug "  client-secret ... " (:client-secret client-options))
-  (log/debug "  redirect-uri .... " (:redirect-uri client-options))
-  (log/debug "  website-url ..... " (:website-url client-options))
+  (println)
+  (println "***")
+  (println)
+  (println "PORT: " (env :port))
+  (println)
+  (println (style "client-id ....... " :yellow) (style (:client-id client-options)     :red))
+  (println (style "client-secret ... " :yellow) (style (:client-secret client-options) :red))
+  (println (style "redirect-uri .... " :yellow) (style (:redirect-uri client-options)  :red))
+  (println (style "website-url ..... " :yellow) (style (:website-url client-options)   :red))
+  (println)
+  (println "***")
+  (println)
 
 
   (let [server-port (Integer. (or port (env :port) 5000))]
@@ -141,11 +155,18 @@
             *client-secret* (:client-secret client-options)
             *callback-url*  (:callback-url client-options)]
 
-    (unsubscribe/all-sync)
+    ;; (unsubscribe/all-sync)
 
     (requester/poll-http :lat     40.765206
                          :lng     -73.977544
                          :radius   3500
-                         :every-ms 2000
                          :callback get-locations
-                         :error    show-error)))
+                         :error    show-error
+                         :every    5000)
+
+    ; (let [; geo-sub-1 (subscribe/geo :lng 74.0059 :lat -40.7127 :radius 5000)
+    ;       ; nyc-geo-sub (subscribe/geo :lat 40.765206 :lng -73.977544 :radius 4500)
+    ;       tag-sub-1 (subscribe/tag :tag "picoftheday")
+    ;       tag-sub-1 (subscribe/tag :tag "yolo")] ))
+
+  (println "running")))
