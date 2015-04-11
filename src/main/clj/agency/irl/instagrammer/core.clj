@@ -79,6 +79,14 @@
   (log/debug "received update")
   (update-clients! "got update"))
 
+
+(defn ping-clients!
+  "Sends a Websocket message to our clients"
+  [res]
+  (let [body (->> (:body res))
+        ping (cheshire/parse-string body)]
+    (update-clients! body)))
+
 (defn show-error
   [err]
   (log/error "error"))
@@ -89,8 +97,6 @@
     (GET  "/ws"  []  handle-websocket)
     (GET  "/callback-url" [] insta-response/echo-hub-challenge)
     (POST "/callback-url" [] (insta-response/make-new-handler got-new-media))
-    ;; works for root prefix
-    ;; (route/resources "/")
     (route/resources "/")
     (route/not-found "Page not found"))
 
@@ -150,5 +156,5 @@
                          :lng     -73.977544
                          :radius   3500
                          :every-ms 2000
-                         :callback get-locations
+                         :callback ping-clients!
                          :error    show-error)))

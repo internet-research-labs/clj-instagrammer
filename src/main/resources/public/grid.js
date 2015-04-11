@@ -42,12 +42,13 @@ function Grid(map, p, q, x_partitions, y_partitions) {
  *
  */
 Grid.prototype.nudge = function(latlng) {
+  // @TODO: Fix this
   var pos = this.entry(latlng);
   var dx = this.right - this.left;
   var dy = this.top - this.bottom;
   return {
-    lat: (dx) * pos.i + this.bottom,
-    lng: (dy) * pos.j + this.left
+    lat: (dy) * pos.i + this.bottom,
+    lng: (dx) * pos.j + this.left
   };
 }
 
@@ -62,10 +63,10 @@ Grid.prototype.entry = function(latlng) {
   var dy = this.top - this.bottom;
 
   return {
-    i: Math.floor((this.y_partitions-1)*(y)/dy),
-    j: Math.floor((this.x_partitions-1)*(x)/dx)
+    i: Math.floor((y)/dy),
+    j: Math.floor((x)/dx)
   };
-}
+};
 
 /**
  *
@@ -78,7 +79,7 @@ Grid.prototype.coord = function(i, j) {
     lat: dx*(0.5 + j) + this.left,
     lng: dy*(0.5 + i) + this.bottom
   };
-}
+};
 
 /**
  *
@@ -87,13 +88,13 @@ Grid.prototype.set = function(latlng, color) {
   var pos = this.entry(latlng);
   var nudged = this.nudge(latlng);
   this.grid[pos.i][pos.j] = new google.maps.Circle({center: latlng, radius: 200});
-}
+};
 
 /**
  *
  */
 Grid.prototype.get = function(latlng) {
-}
+};
 
 /**
  *
@@ -101,14 +102,24 @@ Grid.prototype.get = function(latlng) {
 Grid.prototype.ping = function(latlng, color) {
   var entry = this.entry(latlng);
   var nudge = this.nudge(latlng);
-  // this.grid[entry.i][entry.j] = new google.maps.Circle({center: nudge, radius: 1000});
-  // this.grid[entry.i][entry.j].setMap(this.map);
 
-  var circle = new google.maps.Circle({center: latlng, radius: 500});
-  circle.setMap(this.map);
+  // console.log(entry);
 
-  console.log(nudge);
-
-  this.grid[entry.i][entry.j] = new google.maps.Circle({center: nudge, radius: 700});
+  this.grid[entry.i][entry.j] = new google.maps.Circle({center: nudge, radius: 100});
   this.grid[entry.i][entry.j].setMap(this.map);
-}
+};
+
+Grid.prototype.drawRegion = function() {
+
+  var rectangle = new google.maps.Rectangle({
+    strokeColor: '#FF0000',
+    strokeOpacity: 0.8,
+    strokeWeight: 2,
+    fillColor: '#FF0000',
+    fillOpacity: 0.35,
+    map: this.map,
+    bounds: new google.maps.LatLngBounds(
+      new google.maps.LatLng(this.top, this.left),
+      new google.maps.LatLng(this.bottom, this.right))
+    });
+};
